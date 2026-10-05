@@ -80,7 +80,7 @@ fun HistoryScreen(vm: WifiViewModel, items: List<Measurement>) = Screen {
     if (shown.isEmpty()) Text("Aucune mesure enregistrée.")
     val two = items.filter { it.id in sel }
     if (two.size == 2) Section("Comparaison") {
-        fun row(n: String, f: (Measurement) -> Double?) = Text("$n : ${fmt(f(two[0]), "", 1)} → ${fmt(f(two[1]), "", 1)}")
+        @Composable fun row(n: String, f: (Measurement) -> Double?) = Text("$n : ${fmt(f(two[0]), "", 1)} → ${fmt(f(two[1]), "", 1)}")
         Text("${fmtD.format(Date(two[0].ts))}  →  ${fmtD.format(Date(two[1].ts))}")
         row("RSSI (dBm)") { it.rssi?.toDouble() }; row("Ping (ms)") { it.ping }; row("Jitter (ms)") { it.jitter }
         row("Perte (%)") { it.loss }; row("Download (Mbps)") { it.down }; row("Upload (Mbps)") { it.up }
@@ -91,7 +91,7 @@ fun HistoryScreen(vm: WifiViewModel, items: List<Measurement>) = Screen {
             Text("Ping ${fmt(m.ping, "ms")} · Jitter ${fmt(m.jitter, "ms")} · Perte ${fmt(m.loss, "%")}")
             Text("Down ${fmt(m.down, "Mbps", 1)} · Up ${fmt(m.up, "Mbps", 1)}")
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                FilterChip(m.id in sel, { sel = if (m.id in sel) sel - m.id else (sel + m.id).takeLast(2).toSet() }, { Text("Comparer") })
+                FilterChip(m.id in sel, { sel = if (m.id in sel) sel - m.id else (sel.toList() + m.id).takeLast(2).toSet() }, { Text("Comparer") })
                 TextButton(onClick = { vm.delete(m.id) }) { Text("Supprimer") }
             }
         }
